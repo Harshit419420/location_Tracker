@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Location Tracker (Safe)</title>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f9;
+            text-align: center;
+            padding: 40px;
+        }
+        input,button{
+            padding: 10px;
+            margin: 10px;
+            width: 260px;
+            font-size: 16px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        iframe{
+            margin-top: 20px;
+            width: 90%;
+            height: 350px;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <h2> Phone Location Tracker </h2>
+    <p>(Software-Based|Permission Required)</p>
+
+    <input type="text" id="phone" placeholder="Enter your phone number">
+    <br>
+    <button onclick="tracklocation()">Share My Location</button>
+
+    <div id="result"></div>
+    <div id="map"></div>
+
+    <script>
+        function tracklocation() {
+            const phone = document.getElementById("phone").value;
+
+            if(phone === ""){
+                alert("Please enter Phone Number");
+                return;
+            }
+
+            if(!navigator.geolocation){
+                alert("Gelocation not supported");
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(function(position){
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+
+                document.getElementById("result").innerHTML =
+                "Phone Number:"+phone+"<br>Latitude"+lat+"<br>Longitude:"+lon;
+
+                document.getElementById("map").innerHTML = <iframe src="https:maps.google.com/maps?q=${lat},${lon}&z=15&output=embed"></iframe>;
+},
+
+function(){
+    alert("Location access denied");
+}
+);
+        }
+    </script>
+</body>
+</html>
