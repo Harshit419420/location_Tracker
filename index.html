@@ -2,70 +2,87 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Phone Number Lookup System</title>
+<title>Advanced Location Finder</title>
 
 <style>
 body {
     font-family: Arial;
-    background: #eef2ff;
+    background: #0f172a;
+    color: #e5e7eb;
     text-align: center;
     padding: 40px;
 }
-input, button {
-    padding: 12px;
-    font-size: 16px;
-    margin: 10px;
-    width: 280px;
-}
 button {
-    background: #4f46e5;
-    color: white;
+    padding: 14px 30px;
+    font-size: 18px;
+    background: #22c55e;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
 }
-#result {
-    margin-top: 20px;
+button:hover {
+    background: #16a34a;
+}
+#output {
+    margin-top: 25px;
     font-size: 18px;
+}
+iframe {
+    margin-top: 25px;
+    width: 95%;
+    height: 350px;
+    border-radius: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<h2>📱 Phone Number Lookup (Backend Powered)</h2>
-<p>Approximate & Legal</p>
+<h1>📡 Smart Location Search System</h1>
+<p>High-Accuracy | Permission-Based | Software-Only</p>
 
-<input type="text" id="phone" placeholder="Enter phone number (+91...)">
-<br>
-<button onclick="searchNumber()">Search</button>
+<button onclick="findLocation()">🔍 Search My Location</button>
 
-<div id="result"></div>
+<div id="output"></div>
+<div id="map"></div>
 
 <script>
-function searchNumber() {
-    const phone = document.getElementById("phone").value;
+function findLocation() {
 
-    fetch("http://127.0.0.1:5000/lookup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: phone })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.error) {
-            document.getElementById("result").innerHTML = "❌ " + data.error;
-        } else {
-            document.getElementById("result").innerHTML =
-                "📞 Phone: " + data.phone +
-                "<br>🌍 Region: " + data.country_region +
-                "<br>📡 Carrier: " + data.carrier +
-                "<br>🕒 Time Zone: " + data.time_zone.join(", ");
+    if (!navigator.geolocation) {
+        alert("Geolocation not supported by browser");
+        return;
+    }
+
+    document.getElementById("output").innerHTML =
+        "⏳ Searching location with high accuracy...";
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            const acc = position.coords.accuracy;
+
+            document.getElementById("output").innerHTML =
+                `📍 Latitude: ${lat}<br>
+                 📍 Longitude: ${lon}<br>
+                 🎯 Accuracy: ${acc} meters`;
+
+            document.getElementById("map").innerHTML =
+                `<iframe 
+                 src="https://maps.google.com/maps?q=${lat},${lon}&z=17&output=embed">
+                 </iframe>`;
+        },
+        (error) => {
+            document.getElementById("output").innerHTML =
+                "❌ Location access denied or unavailable";
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
         }
-    })
-    .catch(() => {
-        document.getElementById("result").innerHTML =
-            "❌ Backend not running";
-    });
+    );
 }
 </script>
 
